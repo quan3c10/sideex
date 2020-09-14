@@ -14,7 +14,9 @@
  *  limitations under the License.
  *
  */
-
+/***
+ * Add the listener when input on the command row in the fieldset
+ */
 $("#command-command").on("input", function(event) {
     var temp = getSelectedRecord();
     if (temp) {
@@ -40,7 +42,9 @@ $("#command-command").on("input", function(event) {
         }
     }
 });
-
+/***
+ * Add the listener when input on the target row in the fieldset
+ */
 $("#command-target").on("input", function(event) {
     var temp = getSelectedRecord();
     if (temp) {
@@ -48,6 +52,7 @@ $("#command-target").on("input", function(event) {
         // Check hidden value and target value
         if (!(div.childNodes[0].textContent.includes("d-XPath") && event.target.value.includes("tac"))) {
             var real_command_target = event.target.value;
+            //if the target set to "auto-located-by-tac" IDE will resolve the locator by the first option in datalist
             if (real_command_target == "auto-located-by-tac") {
                 // Real tac value is hidden
                 var real_tac = getTargetDatalist(document.getElementById(temp)).options[0].text;

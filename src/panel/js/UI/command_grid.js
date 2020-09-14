@@ -15,19 +15,39 @@
  *
  */
 
-// get <tr> array
+/***
+ * Get all recorded steps
+ * @returns {HTMLCollectionOf<HTMLElementTagNameMap[string]>}
+ */
 function getRecordsArray() {
     return document.getElementById("records-grid").getElementsByTagName("tr");
 }
 
+/***
+ * Get the hidden value from the given step (td) which stored in the first div
+ * @param node the element which represent the step
+ * @param index 0 - command, 1 - target, 2 - value
+ * @returns {HTMLDivElement}
+ */
 function getTdRealValueNode(node, index) {
     return node.getElementsByTagName("td")[index].getElementsByTagName("div")[0];
 }
 
+/***
+ * Get the displayed value from the given step (td) which stored in the second div
+ * @param node the element which represent the step
+ * @param index 0 - command, 1 - target, 2 - value
+ * @returns {HTMLDivElement}
+ */
 function getTdShowValueNode(node, index) {
     return node.getElementsByTagName("td")[index].getElementsByTagName("div")[1];
 }
 
+/***
+ *
+ * @param node
+ * @returns {HTMLDataListElement}
+ */
 function getTargetDatalist(node) {
     return node.getElementsByTagName("td")[1].getElementsByTagName("datalist")[0];
 }
@@ -57,7 +77,7 @@ function getRecordsNum() {
     return document.getElementById("records-count").value;
 }
 
-function setColor(index, state) {
+function   setColor(index, state) {
     if (typeof(index) == "string") {
         $("#" + index).addClass(state);
     } else {
@@ -251,6 +271,10 @@ function reAssignIdForDelete(delete_ID, count) {
     classifyRecords(delete_ID, count);
 }
 
+/***
+ * Get the selected case in the testcase grid
+ * @returns {null|Element} the p element which represent the test case
+ */
 function getSelectedCase() {
     if (document.getElementById("testCase-grid").getElementsByClassName("selectedCase")) {
         return document.getElementById("testCase-grid").getElementsByClassName("selectedCase")[0];
@@ -259,10 +283,16 @@ function getSelectedCase() {
     }
 }
 
+/***
+ * Get the id of the selected commands (steps) on the record grid
+ * @returns {string}the element id Ex. records-1 or empty string as default
+ */
 function getSelectedRecord() {
     var selectedNode = document.getElementById("records-grid")
+        //The selected command will has the class as selectedRecord
         .getElementsByClassName("selectedRecord");
     if (selectedNode.length) {
+        //return the id
         return selectedNode[0].id;
     } else {
         return "";

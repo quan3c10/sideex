@@ -373,6 +373,9 @@ function addTestSuite(title, id) {
     enableButton("playSuite");
 }
 
+/***
+ * Add class modified to selected case and suite which show a star on top right
+ */
 function modifyCaseSuite() {
     getSelectedCase().classList.add("modified");
     getSelectedSuite().getElementsByTagName("strong")[0].classList.add("modified");
