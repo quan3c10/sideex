@@ -115,7 +115,7 @@ class Feature{
      */
     setScreenshotFolder(featureName)
     {
-        this.screenshotFolder = str_replace(' ','', featureName);
+        //this.screenshotFolder = str_replace(' ','', featureName);
     }
 
     /**
@@ -129,7 +129,7 @@ class Feature{
     /**
      * @param scenarios
      */
-    ơsetScenarios(scenarios)
+    setScenarios(scenarios)
     {
         this.scenarios = scenarios;
     }
@@ -233,5 +233,136 @@ class Feature{
     {
         return this.getPassedScenarios() + this.getFailedScenarios();
     }
+}
 
+class Screnario{
+    getName()
+    {
+        return this.name;
+    }
+
+
+    setName(name)
+    {
+        this.name = name;
+    }
+
+    getScreenshotName()
+    {
+        return this.screenshotName;
+    }
+
+    setScreenshotName(scenarioName)
+    {
+        //this.screenshotName = str_replace(' ','', $scenarioName) . '.png';
+    }
+
+    /**
+     * @return int
+     */
+    getLoopCount()
+    {
+        return this.loopCount;
+    }
+
+    /**
+     * @param loopCount
+     */
+    setLoopCount(loopCount)
+    {
+        this.loopCount = loopCount;
+    }
+    /**
+     * @return mixed
+     */
+    getLine()
+    {
+        return this.line;
+    }
+
+    /**
+     * @param line
+     */
+    setLine(line)
+    {
+        this.line = line;
+    }
+
+    /**
+     * @return mixed
+     */
+    getTags()
+    {
+        return this.tags;
+    }
+
+    /**
+     * @param tags
+     */
+    setTags(tags)
+    {
+        this.tags = tags;
+    }
+
+    /**
+     * @return boolean
+     */
+    isPassed()
+    {
+        return this.passed;
+    }
+
+    /**
+     * @param passed
+     */
+    setPassed(passed)
+    {
+        this.passed = passed;
+    }
+
+    /**
+     * @return Step[]
+     */
+    getSteps()
+    {
+        return this.steps;
+    }
+
+    /**
+     * @param steps
+     */
+    setSteps(steps)
+    {
+        this.steps = steps;
+    }
+
+    /**
+     * @param step
+     */
+    addStep(step)
+    {
+        this.steps.concat(step);
+    }
+
+    /**
+     * @return int
+     */
+    getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * @param id
+     */
+    setId(id)
+    {
+        this.id = id;
+    }
+
+    getLoopSize()
+    {
+        //behat
+        return this.loopCount > 0 ? sizeof(this.steps)/this.loopCount : sizeof(this.steps);
+    }
 }
