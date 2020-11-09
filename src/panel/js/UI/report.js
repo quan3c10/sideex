@@ -235,7 +235,7 @@ class Feature{
     }
 }
 
-class Screnario{
+class Scenario{
     getName()
     {
         return this.name;
@@ -366,3 +366,197 @@ class Screnario{
         return this.loopCount > 0 ? sizeof(this.steps)/this.loopCount : sizeof(this.steps);
     }
 }
+class Steps{
+
+    setScreenshot(screenshot){
+        this.screenshot = screenshot;
+    }
+
+    /**
+     * @return string
+     */
+    getScreenshot(){
+        return this.screenshot;
+    }
+
+    /**
+     * @return mixed
+     */
+    getKeyword()
+    {
+        return this.keyword;
+    }
+
+    /**
+     * @param keyword
+     */
+    setKeyword(keyword)
+    {
+        this.keyword = keyword;
+    }
+
+    /**
+     * @return mixed
+     */
+    getText()
+    {
+        return this.text;
+    }
+
+    /**
+     * @param text
+     */
+    setText(text)
+    {
+        this.text = text;
+    }
+
+    /**
+     * @return mixed
+     */
+    getArguments()
+    {
+        return this.arguments;
+    }
+
+    /**
+     * @param _arguments
+     */
+    setArguments(_arguments)
+    {
+        this.arguments = _arguments;
+    }
+
+    /**
+     * @return mixed
+     */
+    getLine()
+    {
+        return this.line;
+    }
+
+    /**
+     * @param line
+     */
+    setLine(line)
+    {
+        this.line = line;
+    }
+
+    /**
+     * @return mixed
+     */
+    getResult()
+    {
+        return this.result;
+    }
+
+    /**
+     * @param result
+     */
+    setResult(result)
+    {
+        this.result = result;
+    }
+
+    /**
+     * @return mixed
+     */
+    getException()
+    {
+        return this.exception;
+    }
+
+    /**
+     * @param exception
+     */
+    setException(exception)
+    {
+        this.exception = exception;
+    }
+
+    /**
+     * @return mixed
+     */
+    getDefinition()
+    {
+        return this.definition;
+    }
+
+    /**
+     * @param definition
+     */
+    setDefinition(definition)
+    {
+        this.definition = definition;
+    }
+
+    /**
+     * @return mixed
+     */
+    getOutput()
+    {
+        return this.output;
+    }
+
+    /**
+     * @param output
+     */
+    setOutput(output)
+    {
+        this.output = output;
+    }
+
+    /**
+     * @return mixed
+     */
+    getResultCode()
+    {
+        return this.resultCode;
+    }
+
+    /**
+     * @param resultCode
+     */
+    setResultCode(resultCode)
+    {
+        this.resultCode = resultCode;
+    }
+
+    /**
+     * @return boolean
+     */
+    isPassed()
+    {
+        return this.resultCode === 'PASSED';
+    }
+
+    /**
+     * @return boolean
+     */
+    isSkipped()
+    {
+        return this.resultCode === 'SKIPPED';
+    }
+
+    /**
+     * @return boolean
+     */
+    isPending()
+    {
+        return (this.resultCode === 'PENDING' || this.resultCode === 'UNDEFINED');
+    }
+
+    /**
+     * @return boolean
+     */
+    isFailed()
+    {
+        return this.resultCode === 'FAILED';
+    }
+}
+
+var suites = new Suite();
+var features = new Feature();
+var scenarios = new Scenario();
+var steps = new Steps();

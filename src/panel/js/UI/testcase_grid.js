@@ -374,7 +374,7 @@ function addTestSuite(title, id) {
 }
 
 /***
- * Add class modified to selected case and suite which show a star on top right
+ * Add class modified to selected case and suite by that way it will show a star on top right
  */
 function modifyCaseSuite() {
     getSelectedCase().classList.add("modified");

@@ -380,7 +380,7 @@ function resume() {
 }
 
 /***
- * Remove all
+ * Remove all fail and pass class in all cases
  */
 function initAllSuite() {
     cleanCommandToolBar();
@@ -399,11 +399,13 @@ function playSuite(i) {
     var cases = getSelectedSuite().getElementsByTagName("p");
     var length = cases.length;
     if (i == 0) {
+        //log suite now
         sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
     }
     if (i < length) {
         setSelectedCase(cases[i].id);
         setCaseScrollTop(getSelectedCase());
+        //log case now
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
         nextCase(i);
@@ -527,7 +529,7 @@ function initializePlayingProgress(isDbclick) {
 
 function executionLoop() {
     let commands = getRecordsArray();
-
+    //When all done so set test passed
     if (currentPlayingCommandIndex + 1 >= commands.length) {
         if (!caseFailed) {
              setColor(currentTestCaseId, "success");
@@ -810,7 +812,7 @@ function doDomWait() {
             }
         })
 }
-
+//Running steps
 function doCommand() {
     let commands = getRecordsArray();
     let commandName = getCommandName(commands[currentPlayingCommandIndex]);
@@ -868,6 +870,7 @@ function doCommand() {
             }
             return extCommand.sendCommand(commandName, commandTarget, commandValue);
         })
+        //Get result here
         .then(function(result) {
             if (result.result != "success") {
                 // implicit
@@ -893,13 +896,16 @@ function doCommand() {
                 setColor(currentTestCaseId, "fail");
                 document.getElementById("result-failures").textContent = parseInt(document.getElementById("result-failures").textContent) + 1;
                 if (commandName.includes("verify") && result.result.includes("did not match")) {
+                    //Fail with did not match message
                     setColor(currentPlayingCommandIndex + 1, "fail");
                 } else {
+                    //Fail with no message
                     sideex_log.info("Test case failed");
                     caseFailed = true;
                     currentPlayingCommandIndex = commands.length;
                 }
             } else {
+                //Test pass here
                 setColor(currentPlayingCommandIndex + 1, "success");
             }
         })
