@@ -25,8 +25,8 @@ function getRecordsArray() {
 
 /***
  * Get the hidden value from the given step (td) which stored in the first div
- * @param node the element which represent the step
- * @param index 0 - command, 1 - target, 2 - value
+ * @param node {HTMLTableRowElement} the element which represent the step
+ * @param index {int} 0 - command, 1 - target, 2 - value
  * @returns {HTMLDivElement}
  */
 function getTdRealValueNode(node, index) {
@@ -35,8 +35,8 @@ function getTdRealValueNode(node, index) {
 
 /***
  * Get the displayed value from the given step (td) which stored in the second div
- * @param node the element which represent the step
- * @param index 0 - command, 1 - target, 2 - value
+ * @param node {HTMLTableRowElement} the element which represent the step
+ * @param index {int} 0 - command, 1 - target, 2 - value
  * @returns {HTMLDivElement}
  */
 function getTdShowValueNode(node, index) {
@@ -44,14 +44,20 @@ function getTdShowValueNode(node, index) {
 }
 
 /***
- *
- * @param node
+ * Get the locator list which attached to the target (hidden).
+ * @param {HTMLTableRowElement} node the target dom
  * @returns {HTMLDataListElement}
  */
 function getTargetDatalist(node) {
     return node.getElementsByTagName("td")[1].getElementsByTagName("datalist")[0];
 }
 
+/***
+ * Get the command name from given row (tr)
+ * @param tr {HTMLTableRowElementElement} row to get data
+ * @param for_show {boolean} the displayed value or not
+ * @returns {string} the command name
+ */
 function getCommandName(tr, for_show) {
     if (for_show) {
         return getTdShowValueNode(tr, 0).textContent;
@@ -59,6 +65,12 @@ function getCommandName(tr, for_show) {
     return getTdRealValueNode(tr, 0).textContent;
 }
 
+/***
+ * Get the command name from given row (tr)
+ * @param tr {HTMLTableRowElementElement} row to get data
+ * @param for_show {boolean} the displayed value or not
+ * @returns {string} the command target
+ */
 function getCommandTarget(tr, for_show) {
     if (for_show) {
         return getTdShowValueNode(tr, 1).textContent;
@@ -66,6 +78,12 @@ function getCommandTarget(tr, for_show) {
     return getTdRealValueNode(tr, 1).textContent;
 }
 
+/***
+ * Get the command name from given row (tr)
+ * @param tr {HTMLTableRowElementElement} row to get data
+ * @param for_show {boolean} the displayed value or not
+ * @returns {string} the value to add with command
+ */
 function getCommandValue(tr, for_show) {
     if (for_show) {
         return getTdShowValueNode(tr, 2).textContent;
@@ -73,11 +91,20 @@ function getCommandValue(tr, for_show) {
     return getTdRealValueNode(tr, 2).textContent;
 }
 
+/***
+ * Get the total step
+ * @returns {int}
+ */
 function getRecordsNum() {
     return document.getElementById("records-count").value;
 }
 
-function   setColor(index, state) {
+/***
+ * Set the color for step which show by state (class name)
+ * @param index {String|int} the id of step or the index of step
+ * @param state {String} the result status
+ */
+function setColor(index, state) {
     if (typeof(index) == "string") {
         $("#" + index).addClass(state);
     } else {
@@ -87,6 +114,10 @@ function   setColor(index, state) {
     }
 }
 
+/***
+ * Scroll to given step if it is not present on the command table
+ * @param record {HTMLTableRowElement} the target row to scroll
+ */
 function setRecordScrollTop(record) {
     if ($(".smallSection").scrollTop() > record.offsetTop - 65)
         $(".smallSection").animate({
@@ -98,6 +129,10 @@ function setRecordScrollTop(record) {
         }, 200);
 }
 
+/***
+ * Scroll to given testcase if it is not present on the Suite table
+ * @param testCase {HTMLTableRowElement} the target row to scroll
+ */
 function setCaseScrollTop(testCase) {
     if ($(".case_list").scrollTop() > testCase.offsetTop - 143)
         $(".case_list").animate({
@@ -110,6 +145,11 @@ function setCaseScrollTop(testCase) {
 }
 
 // according to "ID" to set odd/even class
+/***
+ * Set the odd and even class for each step base on it's ID
+ * @param start {int} the beginning
+ * @param end {int} the last one
+ */
 function classifyRecords(start, end) {
     var i = start,
         node;
@@ -147,6 +187,11 @@ function classifyRecords(start, end) {
 }
 
 // according to <tr> array's "order" to reassign id
+/***
+ * Re-assign the id when add, append or re-oder the commands
+ * @param start {int} the beginning
+ * @param end {int} the last one
+ */
 function reAssignId(start, end) {
     var records = getRecordsArray();
     start = parseInt(start.split("-")[1]);
@@ -173,8 +218,14 @@ function reAssignId(start, end) {
     }
 }
 
-// attach event on <tr> (records)
+
 var firstSelectedTrId = undefined;
+
+/***
+ * Attach event on <tr> (records)
+ * @param start {int}
+ * @param end {int}
+ */
 function attachEvent(start, end) {
     for (var i = start; i <= end; ++i) {
         var node = document.getElementById("records-" + i);
@@ -262,7 +313,11 @@ function attachEvent(start, end) {
     }
 }
 
-// "delete" command is different from add and reorder
+/***
+ * Re-assign the id when "delete" command, it is different from add and reorder
+ * @param delete_ID {String} the command id
+ * @param count {int} how many command to delete from the given?
+ */
 function reAssignIdForDelete(delete_ID, count) {
     var records = getRecordsArray();
     for (var i = delete_ID - 1; i < count; ++i) {
@@ -285,7 +340,7 @@ function getSelectedCase() {
 
 /***
  * Get the id of the selected commands (steps) on the record grid
- * @returns {string}the element id Ex. records-1 or empty string as default
+ * @returns {String} the element id Ex. records-1 or empty string as default
  */
 function getSelectedRecord() {
     var selectedNode = document.getElementById("records-grid")
@@ -299,6 +354,10 @@ function getSelectedRecord() {
     }
 }
 
+/***
+ * Get all selected rows (steps)
+ * @returns {string|{length}|HTMLCollectionOf<Element>}
+ */
 function getSelectedRecords() {
     var selectedNode = document.getElementById("records-grid").getElementsByClassName("selectedRecord");
     if (selectedNode.length) {
@@ -308,6 +367,14 @@ function getSelectedRecords() {
     }
 }
 
+/***
+ * Add command to grid_command
+ * @param command_name {String} name of the command
+ * @param command_target_array {Array}
+ * @param command_value {String} value of the command
+ * @param auto {int} auto add command 1 true, 0 false
+ * @param insertCommand {Boolean} is append or not?
+ */
 function addCommand(command_name, command_target_array, command_value, auto, insertCommand) {
     // create default test suite and case if necessary
     var s_suite = getSelectedSuite(),

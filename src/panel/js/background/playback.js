@@ -379,6 +379,9 @@ function resume() {
     }
 }
 
+/***
+ * Remove all
+ */
 function initAllSuite() {
     cleanCommandToolBar();
     var suites = document.getElementById("testCase-grid").getElementsByClassName("message");

@@ -3,7 +3,6 @@
     "manifest_version": 2,
     "name": "SideeX - Smart Record-Play Browser Automation",
     "version": "2.3.4",
-    "homepage_url": "http://sideex.org/",
     "icons":
     {
         "48": "icons/icons-48.png",
