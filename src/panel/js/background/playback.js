@@ -400,12 +400,20 @@ function playSuite(i) {
     var length = cases.length;
     if (i == 0) {
         //log suite now
+        var feature = new Feature();
+        feature.setName(sideex_testSuite[getSelectedSuite().id].title);
+        feature.setId(getSelectedSuite().id);
+        feature.setDescription(sideex_testSuite[getSelectedSuite().id].title);
         sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
     }
     if (i < length) {
         setSelectedCase(cases[i].id);
         setCaseScrollTop(getSelectedCase());
         //log case now
+        var scenario = new Scenario();
+        scenario.setName(sideex_testCase[cases[i].id].title);
+        scenario.setId(cases[i].id);
+        feature.addScenario(scenario);
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
         nextCase(i);

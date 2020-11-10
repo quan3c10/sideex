@@ -557,6 +557,3 @@ class Steps{
 }
 
 var suites = new Suite();
-var features = new Feature();
-var scenarios = new Scenario();
-var steps = new Steps();
