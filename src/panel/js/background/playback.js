@@ -37,6 +37,13 @@ var implicitTime = "";
 var caseFailed = false;
 var extCommand = new ExtCommand();
 
+//Report parameters
+var suites = [];
+var currentSuite = new Suite();
+var featureCounter = 1;
+var currentFeature;
+var currentScenario;
+
 // TODO: move to another file
 window.onload = function() {
     var recordButton = document.getElementById("record");
@@ -56,7 +63,9 @@ window.onload = function() {
     var referContainer=document.getElementById("refercontainer");
     var logContainer=document.getElementById("logcontainer");
     var saveLogButton=document.getElementById("save-log");
-    
+
+    //set default report property
+    this.currentSuite.features = [];
     
     saveLogButton.addEventListener("click",savelog);
     referContainer.style.display="none";
@@ -400,22 +409,26 @@ function playSuite(i) {
     var length = cases.length;
     if (i == 0) {
         //log suite now
-        var feature = new Feature();
+        let feature = new Feature();
         feature.setName(sideex_testSuite[getSelectedSuite().id].title);
         feature.setId(getSelectedSuite().id);
         feature.setDescription(sideex_testSuite[getSelectedSuite().id].title);
-        sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
+        this.onBeforeFeatureTested(feature);
+        // sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
+        sideex_log.info("Playing test suite " + feature.getDescription());
     }
     if (i < length) {
+        this.onAfterFeatureTested();
         setSelectedCase(cases[i].id);
         setCaseScrollTop(getSelectedCase());
         //log case now
-        var scenario = new Scenario();
+        let scenario = new Scenario();
         scenario.setName(sideex_testCase[cases[i].id].title);
         scenario.setId(cases[i].id);
-        feature.addScenario(scenario);
+        this.onBeforeScrenarioTested(scenario);
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
+        this.onAfterScrenarioTested();
         nextCase(i);
     } else {
         isPlayingSuite = false;
@@ -443,6 +456,10 @@ function playSuites(i) {
     } else {
         isPlayingAll = false;
         switchPS();
+        console.log(this.suites);
+        //Clear all report data after finished, remember to delete when implement export feature
+        this.suites = [];
+        this.currentSuite.features = [];
     }
 }
 
@@ -617,6 +634,7 @@ function finalizePlayingProgress() {
     if (!isPause) {
         enableClick();
         extCommand.clear();
+        this.onAfterSuiteTested();
     }
     //console.log("success");
     setTimeout(function() {
@@ -826,14 +844,20 @@ function doCommand() {
     let commandName = getCommandName(commands[currentPlayingCommandIndex]);
     let commandTarget = getCommandTarget(commands[currentPlayingCommandIndex]);
     let commandValue = getCommandValue(commands[currentPlayingCommandIndex]);
+    let step = new Steps();
+    step.setKeyword(commandName);
+    step.setText(commandValue);
     //console.log("in common");
 
     if (implicitCount == 0) {
         if (commandTarget.includes("d-XPath")) {
+            step.setArguments(getCommandTarget(commands[currentPlayingCommandIndex], true));
             sideex_log.info("Executing: | " + commandName + " | " + getCommandTarget(commands[currentPlayingCommandIndex], true) + " | " + commandValue + " |");
         } else {
+            step.setArguments(commandTarget);
             sideex_log.info("Executing: | " + commandName + " | " + commandTarget + " | " + commandValue + " |");
         }
+        this.onAfterStepTested(step);
     }
 
     if (!isPlaying) {
@@ -965,4 +989,30 @@ function convertVariableToString(variable){
         frontIndex = variable.indexOf("${");
     }
     return newStr + variable;
+}
+
+function onAfterSuiteTested(){
+    this.suites = this.currentSuite;
+}
+
+function onBeforeFeatureTested(feature){
+    this.currentFeature = feature;
+    this.currentFeature.scenarios = [];
+}
+
+function onAfterFeatureTested(){
+    this.currentSuite.addFeature(this.currentFeature);
+}
+
+function onBeforeScrenarioTested(screnario){
+    this.currentScenario = screnario;
+    this.currentScenario.steps = [];
+}
+
+function onAfterScrenarioTested(){
+    this.currentFeature.addScenario(this.currentScenario);
+}
+
+function onAfterStepTested(step){
+    this.currentScenario.addStep(step);
 }

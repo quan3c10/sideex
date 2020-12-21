@@ -34,11 +34,12 @@ class Suite{
 
     addFeature(feature)
     {
-        this.features.concat(feature);
+        this.features.push(feature);
     }
 }
 
 class Feature{
+
     getName()
     {
         return this.name;
@@ -141,7 +142,7 @@ class Feature{
     {
         scenario.setId(this.scenarioCounter);
         this.scenarioCounter++;
-        this.scenarios.concat(scenario);
+        this.scenarios.push(scenario);
     }
 
     /**
@@ -236,6 +237,7 @@ class Feature{
 }
 
 class Scenario{
+
     getName()
     {
         return this.name;
@@ -341,7 +343,7 @@ class Scenario{
      */
     addStep(step)
     {
-        this.steps.concat(step);
+        this.steps.push(step);
     }
 
     /**
@@ -366,6 +368,7 @@ class Scenario{
         return this.loopCount > 0 ? sizeof(this.steps)/this.loopCount : sizeof(this.steps);
     }
 }
+
 class Steps{
 
     setScreenshot(screenshot){
@@ -555,5 +558,3 @@ class Steps{
         return this.resultCode === 'FAILED';
     }
 }
-
-var suites = new Suite();
