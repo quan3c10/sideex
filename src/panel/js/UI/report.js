@@ -140,8 +140,6 @@ class Feature{
      */
     addScenario(scenario)
     {
-        scenario.setId(this.scenarioCounter);
-        this.scenarioCounter++;
         this.scenarios.push(scenario);
     }
 

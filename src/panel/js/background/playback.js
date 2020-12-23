@@ -41,8 +41,8 @@ var extCommand = new ExtCommand();
 var suites = [];
 var currentSuite = new Suite();
 var featureCounter = 1;
-var currentFeature;
-var currentScenario;
+var currentFeature = new Feature();
+var currentScenario = new Scenario();
 
 // TODO: move to another file
 window.onload = function() {
@@ -562,7 +562,9 @@ function executionLoop() {
              setColor(currentTestCaseId, "success");
             document.getElementById("result-runs").textContent = parseInt(document.getElementById("result-runs").textContent) + 1;
             declaredVars = {};
+            //Log test case result here
             sideex_log.info("Test case passed");
+            this.currentScenario.setPassed(true);
         } else {
             caseFailed = false;
         }
@@ -932,9 +934,13 @@ function doCommand() {
                 if (commandName.includes("verify") && result.result.includes("did not match")) {
                     //Fail with did not match message
                     setColor(currentPlayingCommandIndex + 1, "fail");
+                    step.setResult(result.result);
+                    this.currentScenario.setPassed(false);
                 } else {
                     //Fail with no message
                     sideex_log.info("Test case failed");
+                    step.setResult(result.result);
+                    this.currentScenario.setPassed(false);
                     caseFailed = true;
                     currentPlayingCommandIndex = commands.length;
                 }
