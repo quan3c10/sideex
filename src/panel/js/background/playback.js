@@ -418,7 +418,6 @@ function playSuite(i) {
         sideex_log.info("Playing test suite " + feature.getDescription());
     }
     if (i < length) {
-        this.onAfterFeatureTested();
         setSelectedCase(cases[i].id);
         setCaseScrollTop(getSelectedCase());
         //log case now
@@ -431,6 +430,7 @@ function playSuite(i) {
         this.onAfterScrenarioTested();
         nextCase(i);
     } else {
+        this.onAfterFeatureTested();
         isPlayingSuite = false;
         switchPS();
     }
@@ -440,7 +440,9 @@ function nextCase(i) {
     if (isPlaying || isPause) setTimeout(function() {
         nextCase(i);
     }, 500);
-    else if(isPlayingSuite) playSuite(i + 1);
+    else if(isPlayingSuite){
+        playSuite(i + 1);
+    }
 }
 
 function playSuites(i) {
@@ -1015,4 +1017,12 @@ function onAfterScrenarioTested(){
 
 function onAfterStepTested(step){
     this.currentScenario.addStep(step);
+}
+
+function printReport(){
+    if (this.suites !== []){
+        for (feature of this.currentSuite.getFeatures()){
+
+        }
+    }
 }
