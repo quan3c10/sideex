@@ -523,7 +523,22 @@ class Steps{
      */
     setResultCode(resultCode)
     {
-        this.resultCode = resultCode;
+        switch (resultCode){
+            case 1:
+                this.resultCode = 'FAILED';
+                break;
+            case 2:
+                this.resultCode = 'SKIPPED';
+                break;
+            case 3:
+                this.resultCode = 'PENDING';
+                break;
+            case 4:
+                this.resultCode = 'UNDEFINED';
+                break;
+            default:
+                this.resultCode = 'PASSED';
+        }
     }
 
     /**

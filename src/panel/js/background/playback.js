@@ -859,7 +859,6 @@ function doCommand() {
             step.setArguments(commandTarget);
             sideex_log.info("Executing: | " + commandName + " | " + commandTarget + " | " + commandValue + " |");
         }
-        this.onAfterStepTested(step);
     }
 
     if (!isPlaying) {
@@ -926,6 +925,7 @@ function doCommand() {
                 implicitCount = 0;
                 implicitTime = "";
                 sideex_log.error(result.result);
+                step.setResultCode(1);
                 setColor(currentPlayingCommandIndex + 1, "fail");
                 setColor(currentTestCaseId, "fail");
                 document.getElementById("result-failures").textContent = parseInt(document.getElementById("result-failures").textContent) + 1;
@@ -941,7 +941,9 @@ function doCommand() {
             } else {
                 //Test pass here
                 setColor(currentPlayingCommandIndex + 1, "success");
+                step.setResultCode(0);
             }
+            this.onAfterStepTested(step);
         })
 }
 
