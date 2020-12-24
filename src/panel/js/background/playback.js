@@ -413,9 +413,10 @@ function playSuite(i) {
         feature.setName(sideex_testSuite[getSelectedSuite().id].title);
         feature.setId(getSelectedSuite().id);
         feature.setDescription(sideex_testSuite[getSelectedSuite().id].title);
+        feature.setFailedScenarios(0);
+        feature.setPassedScenarios(0);
         this.onBeforeFeatureTested(feature);
-        // sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
-        sideex_log.info("Playing test suite " + feature.getDescription());
+        sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
     }
     if (i < length) {
         setSelectedCase(cases[i].id);
@@ -424,6 +425,8 @@ function playSuite(i) {
         let scenario = new Scenario();
         scenario.setName(sideex_testCase[cases[i].id].title);
         scenario.setId(cases[i].id);
+        scenario.setFailedSteps(0);
+        scenario.setPassedSteps(0);
         this.onBeforeScrenarioTested(scenario);
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
@@ -928,6 +931,8 @@ function doCommand() {
                 implicitTime = "";
                 sideex_log.error(result.result);
                 step.setResultCode(1);
+                this.currentScenario.addFailedStep();
+                this.currentScenario.setPassed(false);
                 setColor(currentPlayingCommandIndex + 1, "fail");
                 setColor(currentTestCaseId, "fail");
                 document.getElementById("result-failures").textContent = parseInt(document.getElementById("result-failures").textContent) + 1;
@@ -935,12 +940,10 @@ function doCommand() {
                     //Fail with did not match message
                     setColor(currentPlayingCommandIndex + 1, "fail");
                     step.setResult(result.result);
-                    this.currentScenario.setPassed(false);
                 } else {
                     //Fail with no message
                     sideex_log.info("Test case failed");
                     step.setResult(result.result);
-                    this.currentScenario.setPassed(false);
                     caseFailed = true;
                     currentPlayingCommandIndex = commands.length;
                 }
@@ -948,6 +951,7 @@ function doCommand() {
                 //Test pass here
                 setColor(currentPlayingCommandIndex + 1, "success");
                 step.setResultCode(0);
+                this.currentScenario.addPassedStep();
             }
             this.onAfterStepTested(step);
         })
@@ -1021,6 +1025,9 @@ function onBeforeScrenarioTested(screnario){
 
 function onAfterScrenarioTested(){
     this.currentFeature.addScenario(this.currentScenario);
+    if (!this.currentScenario.isPassed()){
+        currentFeature.addFailedScenario();
+    } else currentFeature.addPassedScenario();
 }
 
 function onAfterStepTested(step){

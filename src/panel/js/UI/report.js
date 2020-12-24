@@ -360,6 +360,49 @@ class Scenario{
         this.id = id;
     }
 
+
+    /**
+     * @return mixed
+     */
+    getFailedSteps()
+    {
+        return this.failedSteps;
+    }
+
+    /**
+     * @param failedSteps
+     */
+    setFailedSteps(failedSteps)
+    {
+        this.failedSteps = failedSteps;
+    }
+
+    addFailedStep()
+    {
+        this.failedSteps++;
+    }
+
+    /**
+     * @return mixed
+     */
+    getPassedSteps()
+    {
+        return this.passedSteps;
+    }
+
+    /**
+     * @param passedSteps
+     */
+    setPassedSteps(passedSteps)
+    {
+        this.passedSteps = passedSteps;
+    }
+
+    addPassedStep()
+    {
+        this.passedSteps++;
+    }
+
     getLoopSize()
     {
         //behat
