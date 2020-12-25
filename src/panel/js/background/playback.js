@@ -156,6 +156,9 @@ window.onload = function() {
         document.getElementById("result-runs").textContent = "0";
         document.getElementById("result-failures").textContent = "0";
         recorder.detach();
+        //Clear all report data after finished, remember to delete when implement export feature
+        this.suites = [];
+        this.currentSuite.features = [];
         initAllSuite();
         setCaseScrollTop(getSelectedCase());
         play();
@@ -430,7 +433,6 @@ function playSuite(i) {
         this.onBeforeScrenarioTested(scenario);
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
-        this.onAfterScrenarioTested();
         nextCase(i);
     } else {
         this.onAfterFeatureTested();
@@ -462,9 +464,6 @@ function playSuites(i) {
         isPlayingAll = false;
         switchPS();
         console.log(this.suites);
-        //Clear all report data after finished, remember to delete when implement export feature
-        this.suites = [];
-        this.currentSuite.features = [];
     }
 }
 
@@ -571,6 +570,7 @@ function executionLoop() {
         } else {
             caseFailed = false;
         }
+        this.onAfterScrenarioTested();
         return true;
     }
 
