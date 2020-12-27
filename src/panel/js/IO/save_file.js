@@ -66,7 +66,7 @@ function panelToFile(str) {
         }
 
         var option = pattern[5].match(/<option>[\s\S]*?<\/option>/gi);
-        
+
         str = str + "<tr>" + pattern[1] + "<td>" + pattern[2] + "</td>" + pattern[3] + "<td>" + pattern[4].replace(/\n\s+/g, "") + "<datalist>";
         for (var j = 0; j < option.length; ++j) {
             option[j] = option[j].replace(/<option>/, "").replace(/<\/option>/, "");
@@ -193,4 +193,31 @@ function savelog() {
         saveAs: true,
         conflictAction: 'overwrite'
     });
+}
+
+function renderReport(){
+
+    var data = chrome.runtime.getURL("panel/report/index.html.twig");
+    fetch(data).then(
+            (response) => response.text()
+        ).then(
+            (text) => {
+                var template = Twig.twig({
+                    data: text
+                });
+
+                var output = template.render({
+                    suites
+                });
+
+                var report = makeTextFile(output);
+
+                var downloading = browser.downloads.download({
+                    filename: 'report.html',
+                    url: report,
+                    saveAs: true,
+                    conflictAction: 'overwrite'
+                });
+            }
+    );
 }

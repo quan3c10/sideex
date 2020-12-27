@@ -1,0 +1,355 @@
+ <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>試験報告書: {{ projectname }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="Elkan Roelen" >
+
+        <!-- Bootstrap core CSS -->
+        <link href="assets/Twig/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Font Awesome-->
+        <link href="assets/Twig/css/font-awesome.min.css" rel="stylesheet">
+
+        <!-- Pace -->
+        <link href="assets/Twig/css/pace.css" rel="stylesheet">
+
+        <!-- Datatable -->
+        <link href="assets/Twig/css/jquery.dataTables_themeroller.css" rel="stylesheet">
+
+        <!-- Perfect -->
+        <link href="assets/Twig/css/app.min.css" rel="stylesheet">
+        <link href="assets/Twig/css/app-skin.css" rel="stylesheet">
+
+        <script type="text/javascript">
+            function printReport(){
+                window.focus();
+                window.print();
+            }
+        </script>
+    </head>
+    <body>
+
+    <div id="wrapper" class="">
+        <div id="top-nav" class="skin-6 fixed no-print">
+            <div class="brand">
+
+                <span>{{ projectname }}</span>
+
+            </div><!-- /brand -->
+
+            <ul class="nav-notification clearfix">
+                <li class="">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="expand-all">
+                        <span><i class="fa fa-plus"></i></span>
+                        <strong>シナリオを展開する</strong>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="collapse-all">
+                        <span><i class="fa fa-minus"></i></span>
+                        <strong>シナリオを折りたたむ</strong>
+                    </a>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span><i class="fa fa-chevron-down"></i></span>
+                        <strong>フィルタ</strong>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a tabindex="-1" href="#" id="feature-all-filter" class="main-link"><i class="fa fa-refresh fa-lg"></i>  すべて表示する</a></li>
+                        <li><a tabindex="-2" href="#" id="feature-passed-filter" class="main-link"><i class="fa fa-check fa-lg"></i>  合格シナリオを表示する</a></li>
+                        <li><a tabindex="-3" href="#" id="feature-failed-filter" class="main-link"><i class="fa fa-times fa-lg"></i>  失敗したシナリオを表示する</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:printReport();">
+                        <i class="fa fa-print fa-lg"></i>
+                    </a>
+                </li>
+            </ul>
+
+        </div><!-- /top-nav-->
+
+        <div id="main-container">
+            <div class="padding-md">
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            {% if projectname != null %}
+                                <div class="panel-heading text-center">
+                                    <h2>{{ projectname }}</h2>
+                                </div>
+                            {% endif %}
+                            {% if projectimage != null and projectdescription != null %}
+                                <div class="panel-body text-center">
+                                    {% if projectimage != null %}
+                                        <img src="{{ projectimage }}"><br>
+                                    {% endif %}
+                                    {{ projectdescription }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h2>テストレポートの概要</h2>
+                            </div>
+                            <table class="table table-hover table-striped">
+                                <tbody>
+                                <tr>
+                                    <th>作成日:</th>
+                                    <td>
+                                        {{ buildDate }}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>走る</th>
+                                    <td>
+                                        <div class="progress progress-striped active" style="height:8px; margin:5px 0 0 0;">
+                                            <div id="label" class="progress-bar progress-bar-success" style="width: 100%">
+                                                <span id="label" class="sr-only">100% コンプリート</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>100%</td>
+                                </tr>
+                                <tr>
+                                    <th>合格</th>
+                                    <td>
+                                        <div class="progress progress-striped active" style="height:8px; margin:5px 0 0 0;">
+
+                                            <div id="label" class="progress-bar progress-bar-success" style="width: {{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (passedScenarios|length) }}%">
+                                                <span id="label" class="sr-only">{{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (passedScenarios|length) }}% 合格</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ ((100 /((failedScenarios|length) + (passedScenarios|length))) * (passedScenarios|length))|number_format(2, '.', ',') }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>失敗</th>
+                                    <td>
+
+                                        <div class="progress progress-striped active" style="height:8px; margin:5px 0 0 0;">
+                                            <div id="label" class="progress-bar progress-bar-danger" style="width: {{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (failedScenarios|length) }}%">
+                                                <span id="label" class="sr-only">{{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (failedScenarios|length) }}% 失敗</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ ((100 /((failedScenarios|length) + (passedScenarios|length))) * (failedScenarios|length))|number_format(2, '.', ',') }}%</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- /panel -->
+                    </div><!-- /.col -->
+
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h2>テストスイート</h2>
+                            </div>
+                            <table class="table table-hover table-striped">
+                                <tbody>
+                                <tr>
+                                    <th>スイート</th>
+                                    <th>シナリオ</th>
+                                    <th>ステップ</th>
+                                </tr>
+                                {% for feature in suites.features %}
+                                        <tr>
+                                            <th>
+                                                {{ feature.name|capitalize }}
+                                            </th>
+                                            {% set totalScenarios = 0 %}
+                                            {% set passedScenarios = feature.passedScenarios %}
+                                            {% set failedScenarios = feature.failedScenarios %}
+
+                                            {% set totalSteps = 0 %}
+                                            {% set passedSteps = 0 %}
+                                            {% set failedSteps = 0 %}
+
+                                            {% for scenario in feature.scenarios %}
+                                                {% set totalScenarios = totalScenarios +1 %}
+                                                {% set passedSteps = passedSteps + scenario.passedSteps %}
+                                                {% set failedSteps = failedSteps + scenario.failedSteps %}
+                                                {% for step in scenario.steps %}
+                                                    {% set totalSteps = totalSteps +1 %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                            <td>
+                                                <span id="label" class="label label-default">{% if totalScenarios != '0' %}{{ totalScenarios }} シナリオ{% endif %}</span>
+                                                <span id="label" class="label label-success">{% if passedScenarios > '0' %}{{ passedScenarios }} 合格{% endif %}</span>
+                                                <span id="label" class="label label-danger">{% if failedScenarios > '0' %}{{ failedScenarios }} 失敗した{% endif %}</span>
+                                                <span id="label" class="label label-info">{% if (totalScenarios - passedScenarios - failedScenarios) > '0' %}{{ (totalScenarios - passedScenarios - failedScenarios) }} スキップした{% endif %}</span>
+                                            </td>
+                                            <td>
+                                                <span id="label" class="label label-default">{% if totalSteps > '0' %}{{ totalSteps }} ステップ{% endif %}</span>
+                                                <span id="label" class="label label-success">{% if passedSteps > '0' %}{{ passedSteps }} 合格{% endif %}</span>
+                                                <span id="label" class="label label-danger">{% if failedSteps > '0' %}{{ failedSteps }} 失敗した{% endif %}</span>
+                                                <span id="label" class="label label-info">{% if (totalSteps - passedSteps - failedSteps) > '0' %}{{ (totalSteps - passedSteps - failedSteps) }} スキップした{% endif %}</span>
+                                            </td>
+                                        </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div><!-- /panel -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% for feature in suites.features %}
+                                <div id="suite">
+                                    <div id="page-break" class="page-break"></div>
+                                    <div class="panel panel-default panel-suite">
+                                        <div class="panel-heading">
+                                            <h2>{{ feature.name|capitalize }}</h2>
+                                        </div>
+                                        <div class="panel-body">
+                                            <ol class="dd-list">
+                                                <div class="dd">
+                                                    {% for scenario in feature.scenarios %}
+                                                        <li class="dd-item scenario {% if scenario.isPassed %}success{% else %}failed{% endif %}" data-id="scenario-{{ feature.id }}-{{ scenario.id }}">
+                                                            <div class="dd-nodrag dd-{% if scenario.isPassed %}success{% else %}failed{% endif %}">シナリオ: {{ scenario.name }} <br> {{ scenario.translatedText }}
+                                                                {% if printShowTags != false %}
+                                                                    {% for tag in scenario.tags %}
+                                                                        <span class="pull-right label label-primary">{{ tag }}</span>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </div>
+
+                                                            <ol class="dd-list">
+                                                                {% for step in scenario.steps %}
+                                                                <li class="dd-item step" data-id="step-{{ feature.id }}-{{ scenario.id }}-{{ step.id }}">
+                                                                    <div class="dd-nodrag dd-{% if step.isPassed %}success{% elseif step.isSkipped %}undefined{% elseif step.isPending %}undefined{% else %}failed{% endif %}">
+                                                                        {{ step.output }}<br> {{ step.translatedText }}
+                                                                    </div>
+                                                                    {% if step.screenshot %}
+                                                                        <ol class="dd-list">
+                                                                            <li class="dd-item step-argument dd-collapsed" data-id="step-{{ feature.id }}-{{ scenario.id }}-{{ step.id }}-argument">
+                                                                                <div class="dd-nodrag dd-{% if step.isPassed %}success{% elseif step.isSkipped %}undefined{% elseif step.isPending %}undefined{% else %}failed{% endif %}">
+                                                                                    {% if step.screenshot %}
+                                                                                        <img src="{{ step.screenshot | raw }}"><br/>
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                            </li>
+                                                                        </ol>
+                                                                    {% endif %}
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ol>
+                                                        </li>
+                                                    {% endfor %}
+                                                </div>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div><!-- suite -->
+                        {% endfor %}
+                    </div>
+
+                </div><!-- /.row -->
+            </div><!-- padding -->
+
+            <div class="col-sm-12">
+					<span class="footer-brand">
+					<hr>
+						<a id="footer" href="">このレポートは、 <strong id="footer-danger" class="text-danger">Deha - QAチーム</strong></a>
+					</span>
+            </div><!-- /.col -->
+
+        </div><!-- /main-container -->
+
+    </div><!-- /wrapper -->
+
+    <a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
+
+    <!-- The javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <!-- Jquery -->
+    <script src="assets/Twig/js/jquery-1.10.2.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="assets/Twig/js/bootstrap.min.js"></script>
+
+    <!-- Datatable -->
+    <script src="assets/Twig/js/jquery.dataTables.min.js"></script>
+    <script src="assets/Twig/js/jquery.nestable.min.js"></script>
+
+    <!-- Modernizr -->
+    <script src="assets/Twig/js/modernizr.min.js"></script>
+
+    <!-- Pace -->
+    <script src="assets/Twig/js/pace.min.js"></script>
+
+    <!-- Slimscroll -->
+    <script src="assets/Twig/js/jquery.slimscroll.min.js"></script>
+
+    <!-- Cookie -->
+    <script src="assets/Twig/js/jquery.cookie.min.js"></script>
+
+    <!-- Perfect -->
+    <script src="assets/Twig/js/app.js"></script>
+    <script>
+        $(function()	{
+            $('.dd').nestable();
+        });
+
+
+        $(function () {
+            $('#expand-all').click(function () {
+                $('.dd').nestable('expandAll');
+            });
+
+            $('#collapse-all').click(function () {
+                $('.dd').nestable('collapseAll');
+            });
+
+            $('.dd').nestable('collapseAll');
+
+            $('#feature-failed-filter').click(function () {
+                $("div#page-break").each(function(){
+                    $(this).attr("class", "page-break-no-print");
+                });
+                $('.feature').hide();
+                $('.scenario').hide();
+                $('div.panel-suite').hide();
+                $('.scenario.failed').show();
+                $('.scenario.failed').closest('.feature').show();
+                $('.scenario.failed').closest('div.panel-suite').show();
+                $('.scenario.failed').closest('#suite').find('#page-break').attr("class", "page-break");
+            });
+            $('#feature-passed-filter').click(function () {
+                $("div#page-break").each(function(){
+                    $(this).attr("class", "page-break-no-print");
+                });
+                $('.feature').hide();
+                $('.scenario').hide();
+                $('div.panel-suite').hide();
+                $('.scenario.success').show();
+                $('.scenario.success').closest('.feature').show();
+                $('.scenario.success').closest('div.panel-suite').show();
+                $('.scenario.success').closest('#suite').find('div#page-break').attr('class', 'page-break');
+            });
+            $('#feature-all-filter').click(function () {
+                $("div#page-break").each(function(){
+                    $(this).attr("class", "page-break");
+                });
+                $('.scenario').show();
+                $('.feature').show();
+                $('div.panel-suite').show();
+            });
+        });
+    </script>
+
+    </body>
+    </html>

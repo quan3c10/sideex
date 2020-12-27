@@ -46,6 +46,7 @@
     <script type="text/javascript" src="js/UI/panelSetting.js"></script>
     <script type="text/javascript" src="js/UI/sortable-ui.js"></script>
     <script type="text/javascript" src="js/background/doc.js"></script>
+    <script type="text/javascript" src="js/lib/twig.min.js"></script>
 </head>
 <!-- TODO: Make whole panel size flexible -->
 
@@ -147,7 +148,7 @@
                             <tbody id="records-grid">
                                 <input id="records-count" type="hidden" value="0">
                                 </input>
-                                
+
                                 <!-- set input and /tbody in same line to avoid textNode -->
                                 <!--<tr>
                                     <td>time</td>
@@ -247,15 +248,16 @@
             <div class="clear"></div>
             <article class="module width_full">
                 <header class="tabs_involved">
-                    <ul class="tabs2"> 
+                    <ul class="tabs2">
                     <li id="history-log"><a>Log</a></li>
                     <li id="reference-log"><a>Reference</a></li>
                     </ul>
                     <ul class="tabs">
+                        <li id="report"><a>Report</a></li>
                         <li id="save-log"><a>Save</a></li>
                         <li id="clear-log"><a>Clear</a></li>
                     </ul>
-                    
+
                 </header>
                 <div id="tab4" class="tab_content case_roll">
                     <div class="module_content">

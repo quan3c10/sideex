@@ -63,21 +63,24 @@ window.onload = function() {
     var referContainer=document.getElementById("refercontainer");
     var logContainer=document.getElementById("logcontainer");
     var saveLogButton=document.getElementById("save-log");
+    var exportReportButton=document.getElementById("report");
 
     //set default report property
     this.currentSuite.features = [];
-    
+
     saveLogButton.addEventListener("click",savelog);
+
+    exportReportButton.addEventListener("click",renderReport);
     referContainer.style.display="none";
     $('#command-command').on('input change', function() {
         scrape(document.getElementById("command-command").value);
     });
-   
+
     suitePlus.addEventListener("mouseover", mouseOnSuiteTitleIcon);
     suitePlus.addEventListener("mouseout", mouseOutSuiteTitleIcon);
     suiteOpen.addEventListener("mouseover", mouseOnSuiteTitleIcon);
     suiteOpen.addEventListener("mouseout", mouseOutSuiteTitleIcon);
-    
+
     var logLi=document.getElementById("history-log");
     var referenceLi=document.getElementById("reference-log");
     var logState=true;
@@ -89,7 +92,7 @@ window.onload = function() {
     logLi.addEventListener("mouseout",function(){
         if(logState)
             logLi.firstChild.style.color="#333333";
-        else 
+        else
             logLi.firstChild.style.color="#818181"
     })
     referenceLi.addEventListener("mouseover",function(){
@@ -98,13 +101,13 @@ window.onload = function() {
     referenceLi.addEventListener("mouseout",function(){
         if(referenceState)
             referenceLi.firstChild.style.color="#333333";
-        else 
+        else
             referenceLi.firstChild.style.color="#818181"
     })
-    logLi.addEventListener("click",function(){       
+    logLi.addEventListener("click",function(){
         if(logState==false){
             document.getElementById("clear-log").parentElement.style.display="inline";
-           
+
             logContainer.style.display="inline";
             referContainer.style.display="none";
             logLi.firstChild.style.color="#333333";
@@ -116,7 +119,7 @@ window.onload = function() {
     referenceLi.addEventListener("click",function(){
         if(referenceState==false){
             document.getElementById("clear-log").parentElement.style.display="none";
-           
+
             scrape(document.getElementById("command-command").value);
             referContainer.style.display="inline";
             logContainer.style.display="none";
@@ -187,7 +190,7 @@ window.onload = function() {
     selectElementButton.addEventListener("click",function(){
         var button = document.getElementById("selectElementButton");
         if (isSelecting) {
-            isSelecting = false; 
+            isSelecting = false;
             button.textContent = "Select";
             browser.tabs.query({
                 active: true,
@@ -210,7 +213,7 @@ window.onload = function() {
         }).then(function(tabs) {
             if (tabs.length === 0) {
                 console.log("No match tabs");
-                isSelecting = false; 
+                isSelecting = false;
                 button.textContent = "Select";
             } else
                 browser.tabs.sendMessage(tabs[0].id, {selectMode: true, selecting: true});
@@ -485,7 +488,7 @@ function executeCommand(index) {
         sideex_log.info("Executing: | " + commandName + " | " + getCommandTarget(commands[id], true) + " | " + commandValue + " |");
     } else {
         sideex_log.info("Executing: | " + commandName + " | " + commandTarget + " | " + commandValue + " |");
-    }	
+    }
 
     initializePlayingProgress(true);
 
@@ -530,7 +533,7 @@ function cleanStatus() {
 
 function initializePlayingProgress(isDbclick) {
     disableClick();
-    
+
     isRecording = false;
     isPlaying = true;
 
@@ -618,7 +621,7 @@ function executionLoop() {
             return (extCommand["do" + upperCase](commandTarget, commandValue))
                .then(function() {
                     setColor(currentPlayingCommandIndex + 1, "success");
-               }).then(executionLoop); 
+               }).then(executionLoop);
         } else {
             return doPreparation()
                .then(doPrePageWait)
@@ -632,7 +635,7 @@ function executionLoop() {
 }
 
 function delay(t) {
-    return new Promise(function(resolve) { 
+    return new Promise(function(resolve) {
         setTimeout(resolve, t)
     });
  }
@@ -1031,13 +1034,18 @@ function onAfterScrenarioTested(){
 }
 
 function onAfterStepTested(step){
+    step.output = translateCommand(step.keyword, step.text, step.arguments)
     this.currentScenario.addStep(step);
 }
 
-function printReport(){
-    if (this.suites !== []){
-        for (feature of this.currentSuite.getFeatures()){
+function translateCommand(command, text, argument){
+    let step = "";
 
-        }
-    }
+    if(command.includes('assert') || command.includes('verify')){
+        step = "Then";
+    }else if (command.includes('open')){
+        step = "Given";
+    }else step = "And";
+
+    return step + " I " + " " + command + " " + text + " " + argument;
 }

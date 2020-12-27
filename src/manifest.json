@@ -51,5 +51,5 @@
         "default_title": "SideeX"
     },
 
-    "web_accessible_resources": ["page/prompt.js", "page/runScript.js"]
+    "web_accessible_resources": ["page/prompt.js", "page/runScript.js","panel/report/index.html.twig"]
 }
