@@ -231,12 +231,15 @@
                                                                     <div class="dd-nodrag dd-{% if step.isPassed %}success{% elseif step.isSkipped %}undefined{% elseif step.isPending %}undefined{% else %}failed{% endif %}">
                                                                         {{ step.output }}<br> {{ step.translatedText }}
                                                                     </div>
-                                                                    {% if step.screenshot %}
+                                                                    {% if step.exception != null or step.screenshot != null %}
                                                                         <ol class="dd-list">
                                                                             <li class="dd-item step-argument dd-collapsed" data-id="step-{{ feature.id }}-{{ scenario.id }}-{{ step.id }}-argument">
                                                                                 <div class="dd-nodrag dd-{% if step.isPassed %}success{% elseif step.isSkipped %}undefined{% elseif step.isPending %}undefined{% else %}failed{% endif %}">
-                                                                                    {% if step.screenshot %}
+                                                                                    {% if step.screenshot != null %}
                                                                                         <img src="{{ step.screenshot | raw }}"><br/>
+                                                                                    {% endif %}
+                                                                                    {% if step.exception != null %}
+                                                                                        <p style="padding-left:2em ; color:gray">({{ step.exception | nl2br }})</p>
                                                                                     {% endif %}
                                                                                 </div>
                                                                             </li>
