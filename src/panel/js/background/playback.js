@@ -943,12 +943,12 @@ function doCommand() {
                     //Fail with did not match message
                     setColor(currentPlayingCommandIndex + 1, "fail");
                     step.setException(result.result);
-                    step.setScreenshot(captureScreenshot(this.currentFeature.id + this.currentScenario.id));
+                    step.setScreenshot(captureScreenshot());
                 } else {
                     //Fail with no message
                     sideex_log.info("Test case failed");
                     step.setException(result.result);
-                    step.setScreenshot(captureScreenshot(this.currentFeature.id + this.currentScenario.id));
+                    step.setScreenshot(captureScreenshot());
                     caseFailed = true;
                     currentPlayingCommandIndex = commands.length;
                 }
@@ -1052,6 +1052,10 @@ function translateCommand(command, text, argument){
     return step + " I " + " " + command + " " + text + " " + argument;
 }
 
-function captureScreenshot(filename){
-    return extCommand.sendCommand("captureEntirePageScreenshot", filename);
+function captureScreenshot(){
+    browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        browser.tabs.sendMessage(tabs[0].id, {capture: true}, function(response) {
+            return response.screenshot;
+        });
+    });
 }

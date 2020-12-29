@@ -41,7 +41,7 @@ function doCommands(request, sender, sendResponse, type) {
             if (selenium["do" + upperCase] != null) {
                 try {
                     document.body.setAttribute("SideeXPlayingFlag", true);
-                    let returnValue = selenium["do"+upperCase](request.target,selenium.preprocessParameter(request.value));                  
+                    let returnValue = selenium["do"+upperCase](request.target,selenium.preprocessParameter(request.value));
                     if (returnValue instanceof Promise) {
                         // The command is a asynchronous function
                         returnValue.then(function(value) {
@@ -113,6 +113,10 @@ function doCommands(request, sender, sendResponse, type) {
     } else if (request.detachRecorder) {
         recorder.detach();
         return;
+    }
+
+    if(request.capture){
+        sendResponse(chrome.pageCapture.saveAsMHTML(sender.tab.id,(mhtmlData) => {return mhtmlData;}));
     }
 
 }
