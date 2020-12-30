@@ -115,10 +115,20 @@ function doCommands(request, sender, sendResponse, type) {
         return;
     }
 
-    if(request.capture){
-        sendResponse(chrome.pageCapture.saveAsMHTML(sender.tab.id,(mhtmlData) => {return mhtmlData;}));
-    }
+    if(request.capture) {
+        browser.pageCapture.saveAsMHTML(sender.id, function (stream) {
+            if (stream instanceof Promise) {
+                // The command is a asynchronous function
+                stream.then(function (resutl) {
+                    sendResponse({screenshot: resutl});
+                });
+            } else {
+                sendResponse({screenshot: stream});
+            }
 
+            return true;
+        });
+    }
 }
 
 browser.runtime.onMessage.addListener(doCommands);

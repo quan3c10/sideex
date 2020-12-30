@@ -1053,9 +1053,12 @@ function translateCommand(command, text, argument){
 }
 
 function captureScreenshot(){
-    browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        browser.tabs.sendMessage(tabs[0].id, {capture: true}, function(response) {
-            return response.screenshot;
-        });
-    });
+    browser.tabs.query({
+        active: true,
+        windowId: contentWindowId
+    }).then(function(tabs) {
+        browser.tabs.sendMessage(tabs[0].id, {capture: true});
+    }).then(function(response) {
+        return response.screenshot;
+    })
 }
