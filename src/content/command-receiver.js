@@ -116,18 +116,10 @@ function doCommands(request, sender, sendResponse, type) {
     }
 
     if(request.capture) {
-        browser.pageCapture.saveAsMHTML(sender.id, function (stream) {
-            if (stream instanceof Promise) {
-                // The command is a asynchronous function
-                stream.then(function (resutl) {
-                    sendResponse({screenshot: resutl});
-                });
-            } else {
-                sendResponse({screenshot: stream});
-            }
-
-            return true;
-        });
+        browser.tabCapture.capture().then(function (stream) {
+            sendResponse({screenshot: stream});
+        })
+        return;
     }
 }
 
