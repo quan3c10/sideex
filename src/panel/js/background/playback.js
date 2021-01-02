@@ -43,6 +43,7 @@ var currentSuite = new Suite();
 var featureCounter = 1;
 var currentFeature = new Feature();
 var currentScenario = new Scenario();
+var currentStep = new Steps();
 
 // TODO: move to another file
 window.onload = function() {
@@ -159,9 +160,6 @@ window.onload = function() {
         document.getElementById("result-runs").textContent = "0";
         document.getElementById("result-failures").textContent = "0";
         recorder.detach();
-        //Clear all report data after finished, remember to delete when implement export feature
-        this.suites = [];
-        this.currentSuite.features = [];
         initAllSuite();
         setCaseScrollTop(getSelectedCase());
         play();
@@ -407,6 +405,9 @@ function initAllSuite() {
             $("#" + cases[u].id).removeClass('fail success');
         }
     }
+    //Clear all report data after finished, remember to delete when implement export feature
+    this.suites = [];
+    this.currentSuite.features = [];
 }
 
 function playSuite(i) {
@@ -415,25 +416,14 @@ function playSuite(i) {
     var length = cases.length;
     if (i == 0) {
         //log suite now
-        let feature = new Feature();
-        feature.setName(sideex_testSuite[getSelectedSuite().id].title);
-        feature.setId(getSelectedSuite().id);
-        feature.setDescription(sideex_testSuite[getSelectedSuite().id].title);
-        feature.setFailedScenarios(0);
-        feature.setPassedScenarios(0);
-        this.onBeforeFeatureTested(feature);
+        this.generateFeature();
         sideex_log.info("Playing test suite " + sideex_testSuite[getSelectedSuite().id].title);
     }
     if (i < length) {
         setSelectedCase(cases[i].id);
         setCaseScrollTop(getSelectedCase());
         //log case now
-        let scenario = new Scenario();
-        scenario.setName(sideex_testCase[cases[i].id].title);
-        scenario.setId(cases[i].id);
-        scenario.setFailedSteps(0);
-        scenario.setPassedSteps(0);
-        this.onBeforeScrenarioTested(scenario);
+        this.genarateScenario();
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
         nextCase(i);
@@ -854,17 +844,15 @@ function doCommand() {
     let commandName = getCommandName(commands[currentPlayingCommandIndex]);
     let commandTarget = getCommandTarget(commands[currentPlayingCommandIndex]);
     let commandValue = getCommandValue(commands[currentPlayingCommandIndex]);
-    let step = new Steps();
-    step.setKeyword(commandName);
-    step.setText(commandValue);
+    generateStep(commandName,commandValue)
     //console.log("in common");
 
     if (implicitCount == 0) {
         if (commandTarget.includes("d-XPath")) {
-            step.setArguments(getCommandTarget(commands[currentPlayingCommandIndex], true));
+            this.currentStep.setArguments(getCommandTarget(commands[currentPlayingCommandIndex], true));
             sideex_log.info("Executing: | " + commandName + " | " + getCommandTarget(commands[currentPlayingCommandIndex], true) + " | " + commandValue + " |");
         } else {
-            step.setArguments(commandTarget);
+            this.currentStep.setArguments(commandTarget);
             sideex_log.info("Executing: | " + commandName + " | " + commandTarget + " | " + commandValue + " |");
         }
     }
@@ -933,7 +921,7 @@ function doCommand() {
                 implicitCount = 0;
                 implicitTime = "";
                 sideex_log.error(result.result);
-                step.setResultCode(1);
+                this.currentStep.setResultCode(1);
                 this.currentScenario.addFailedStep();
                 this.currentScenario.setPassed(false);
                 setColor(currentPlayingCommandIndex + 1, "fail");
@@ -942,23 +930,23 @@ function doCommand() {
                 if (commandName.includes("verify") && result.result.includes("did not match")) {
                     //Fail with did not match message
                     setColor(currentPlayingCommandIndex + 1, "fail");
-                    step.setException(result.result);
-                    step.setScreenshot(captureScreenshot());
+                    this.currentStep.setException(result.result);
+                    captureScreenshot(this.currentStep);
                 } else {
                     //Fail with no message
                     sideex_log.info("Test case failed");
-                    step.setException(result.result);
-                    step.setScreenshot(captureScreenshot());
+                    this.currentStep.setException(result.result);
+                    captureScreenshot(this.currentStep);
                     caseFailed = true;
                     currentPlayingCommandIndex = commands.length;
                 }
             } else {
                 //Test pass here
                 setColor(currentPlayingCommandIndex + 1, "success");
-                step.setResultCode(0);
+                this.currentStep.setResultCode(0);
                 this.currentScenario.addPassedStep();
             }
-            this.onAfterStepTested(step);
+            this.onAfterStepTested();
         })
 }
 
@@ -1035,30 +1023,55 @@ function onAfterScrenarioTested(){
     } else currentFeature.addPassedScenario();
 }
 
-function onAfterStepTested(step){
-    step.output = translateCommand(step.keyword, step.text, step.arguments)
-    this.currentScenario.addStep(step);
+function onBeforeStepTested(step) {
+    this.currentStep = step;
 }
 
-function translateCommand(command, text, argument){
+function onAfterStepTested(){
+    this.translateCommand();
+    this.currentScenario.addStep(this.currentStep);
+}
+
+function generateFeature(){
+    let feature = new Feature();
+    feature.setName(sideex_testSuite[getSelectedSuite().id].title);
+    feature.setId(getSelectedSuite().id);
+    feature.setDescription(sideex_testSuite[getSelectedSuite().id].title);
+    feature.setFailedScenarios(0);
+    feature.setPassedScenarios(0);
+    this.onBeforeFeatureTested(feature);
+}
+
+function genarateScenario() {
+    let scenario = new Scenario();
+    scenario.setName(sideex_testCase[getSelectedCase().id].title);
+    scenario.setId(getSelectedCase().id);
+    scenario.setFailedSteps(0);
+    scenario.setPassedSteps(0);
+    this.onBeforeScrenarioTested(scenario);
+}
+
+function generateStep(name,value) {
+    let step = new Steps();
+    step.setKeyword(name);
+    step.setText(value);
+    this.onBeforeStepTested(step);
+}
+
+function translateCommand(){
     let step = "";
 
-    if(command.includes('assert') || command.includes('verify')){
+    if(this.currentStep.getKeyword().includes('assert') || this.currentStep.getKeyword().includes('verify')){
         step = "Then";
-    }else if (command.includes('open')){
+    }else if (this.currentStep.getKeyword().includes('open')){
         step = "Given";
     }else step = "And";
 
-    return step + " I " + " " + command + " " + text + " " + argument;
+    this.currentStep.output = step + " I " + " " + this.currentStep.getKeyword() + " " + this.currentStep.getText() + " " + this.currentStep.getArguments();
 }
 
-function captureScreenshot(){
-    browser.tabs.query({
-        active: true,
-        windowId: contentWindowId
-    }).then(function(tabs) {
-        browser.tabs.sendMessage(tabs[0].id, {capture: true});
-    }).then(function(response) {
-        return response.screenshot;
-    })
+function captureScreenshot(step){
+    browser.runtime.sendMessage({capture: true}).then(function (result){
+        step.setScreenshot(result.url);
+    });
 }

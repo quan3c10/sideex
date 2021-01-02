@@ -114,13 +114,6 @@ function doCommands(request, sender, sendResponse, type) {
         recorder.detach();
         return;
     }
-
-    if(request.capture) {
-        browser.tabCapture.capture().then(function (stream) {
-            sendResponse({screenshot: stream});
-        })
-        return;
-    }
 }
 
 browser.runtime.onMessage.addListener(doCommands);
