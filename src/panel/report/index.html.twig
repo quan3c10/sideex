@@ -79,11 +79,12 @@
 
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            {% if projectname != null %}
-                                <div class="panel-heading text-center">
-                                    <h2>{{ projectname }}</h2>
-                                </div>
+                            {% if projectname == null %}
+                                {% set projectname = 'Template' %}
                             {% endif %}
+                            <div class="panel-heading text-center">
+                                <h2>{{ projectname }}</h2>
+                            </div>
                             {% if projectimage != null and projectdescription != null %}
                                 <div class="panel-body text-center">
                                     {% if projectimage != null %}
@@ -122,29 +123,36 @@
                                     </td>
                                     <td>100%</td>
                                 </tr>
+
+                                {% set passedScenarios = 0 %}
+                                {% set failedScenarios = 0 %}
+                                {% for feature in suites.features %}
+                                    {% set passedScenarios = passedScenarios + feature.passedScenarios %}
+                                    {% set failedScenarios = failedScenarios + feature.failedScenarios %}
+                                {% endfor %}
+
                                 <tr>
                                     <th>合格</th>
                                     <td>
                                         <div class="progress progress-striped active" style="height:8px; margin:5px 0 0 0;">
-
-                                            <div id="label" class="progress-bar progress-bar-success" style="width: {{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (passedScenarios|length) }}%">
-                                                <span id="label" class="sr-only">{{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (passedScenarios|length) }}% 合格</span>
+                                            <div id="label" class="progress-bar progress-bar-success" style="width: {{ (100 /((failedScenarios) + (passedScenarios))) * (passedScenarios) }}%">
+                                                <span id="label" class="sr-only">{{ (100 /((failedScenarios) + (passedScenarios))) * (passedScenarios) }}% 合格</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ ((100 /((failedScenarios|length) + (passedScenarios|length))) * (passedScenarios|length))|number_format(2, '.', ',') }}%</td>
+                                    <td>{{ ((100 /((failedScenarios) + (passedScenarios))) * (passedScenarios))|number_format(2, '.', ',') }}%</td>
                                 </tr>
                                 <tr>
                                     <th>失敗</th>
                                     <td>
 
                                         <div class="progress progress-striped active" style="height:8px; margin:5px 0 0 0;">
-                                            <div id="label" class="progress-bar progress-bar-danger" style="width: {{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (failedScenarios|length) }}%">
-                                                <span id="label" class="sr-only">{{ (100 /((failedScenarios|length) + (passedScenarios|length))) * (failedScenarios|length) }}% 失敗</span>
+                                            <div id="label" class="progress-bar progress-bar-danger" style="width: {{ (100 /((failedScenarios) + (passedScenarios))) * (failedScenarios) }}%">
+                                                <span id="label" class="sr-only">{{ (100 /((failedScenarios) + (passedScenarios))) * (failedScenarios) }}% 失敗</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ ((100 /((failedScenarios|length) + (passedScenarios|length))) * (failedScenarios|length))|number_format(2, '.', ',') }}%</td>
+                                    <td>{{ ((100 /((failedScenarios) + (passedScenarios))) * (failedScenarios))|number_format(2, '.', ',') }}%</td>
                                 </tr>
                                 </tbody>
                             </table>

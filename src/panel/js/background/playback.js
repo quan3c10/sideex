@@ -422,8 +422,6 @@ function playSuite(i) {
     if (i < length) {
         setSelectedCase(cases[i].id);
         setCaseScrollTop(getSelectedCase());
-        //log case now
-        this.genarateScenario();
         sideex_log.info("Playing test case " + sideex_testCase[cases[i].id].title);
         play();
         nextCase(i);
@@ -549,6 +547,10 @@ function initializePlayingProgress(isDbclick) {
     return extCommand.init();
 }
 
+/***
+ * Play a scenario in feature, do a loop to all the steps
+ * @returns {Promise<never>|boolean|Promise<*>}
+ */
 function executionLoop() {
     let commands = getRecordsArray();
     //When all done so set test passed
@@ -564,6 +566,11 @@ function executionLoop() {
             caseFailed = false;
         }
         this.onAfterScrenarioTested();
+
+        if(!isPlayingSuite){
+            this.onAfterFeatureTested();
+        }
+
         return true;
     }
 
@@ -588,6 +595,13 @@ function executionLoop() {
 
     if (commands[currentPlayingCommandIndex].getElementsByTagName("td")[0].classList.contains("stopping")) {
         commands[currentPlayingCommandIndex].getElementsByTagName("td")[0].classList.remove("stopping");
+    }
+
+    if(currentPlayingCommandIndex == 0){
+        this.genarateScenario();
+        if(!isPlayingSuite){
+            this.generateFeature();
+        }
     }
 
     let commandName = getCommandName(commands[currentPlayingCommandIndex]);
@@ -945,6 +959,9 @@ function doCommand() {
                 setColor(currentPlayingCommandIndex + 1, "success");
                 this.currentStep.setResultCode(0);
                 this.currentScenario.addPassedStep();
+                if (commandName.includes("verify") || commandName.includes("assert")){
+                    captureScreenshot(this.currentStep);
+                }
             }
             this.onAfterStepTested();
         })
