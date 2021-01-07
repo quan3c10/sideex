@@ -406,7 +406,7 @@ function addCommand(command_name, command_target_array, command_value, auto, ins
             div_hidden.appendChild(document.createTextNode(command_name));
         } else if (i == 1) {
             // use textNode to avoid tac's tag problem (textNode's content will be pure text, does not be parsed as html)
-            div_hidden.appendChild(document.createTextNode(command_target_array[0][0]));
+            div_hidden.appendChild(document.createTextNode(command_target_array[0][1] === "target-name" ? "target-" + command_target_array[1][0] : command_target_array[0][0]));
         } else {
             div_hidden.appendChild(document.createTextNode(command_value));
         }
@@ -478,7 +478,7 @@ function addCommand(command_name, command_target_array, command_value, auto, ins
             string = command_name;
         } else if (k == 1) {
             // some target is not a pure string, so we need to change the type to string
-            string = command_target_array[0][0].toString();
+            string = command_target_array[0][1] === "target-name" ? "target-" + command_target_array[1][0].toString() : command_target_array[0][0].toString();
             if (string.includes("d-XPath")) {
                 string = "auto-located-by-tac";
             }

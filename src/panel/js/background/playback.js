@@ -858,7 +858,8 @@ function doCommand() {
     let commandName = getCommandName(commands[currentPlayingCommandIndex]);
     let commandTarget = getCommandTarget(commands[currentPlayingCommandIndex]);
     let commandValue = getCommandValue(commands[currentPlayingCommandIndex]);
-    generateStep(commandName,commandValue)
+    let target = getTargetDatalist(commands[currentPlayingCommandIndex]);
+    generateStep(commandName,commandValue, target);
     //console.log("in common");
 
     if (implicitCount == 0) {
@@ -1045,7 +1046,6 @@ function onBeforeStepTested(step) {
 }
 
 function onAfterStepTested(){
-    this.translateCommand();
     this.currentScenario.addStep(this.currentStep);
 }
 
@@ -1068,27 +1068,32 @@ function genarateScenario() {
     this.onBeforeScrenarioTested(scenario);
 }
 
-function generateStep(name,value) {
+function generateStep(name, value, target) {
     let step = new Steps();
     step.setKeyword(name);
     step.setText(value);
+    translateCommand(step, target);
     this.onBeforeStepTested(step);
 }
 
-function translateCommand(){
-    let step = "";
+function translateCommand(step, target){
+    let bdd = "";
 
-    if(this.currentStep.getKeyword().includes('assert') || this.currentStep.getKeyword().includes('verify')){
-        step = "Then";
-    }else if (this.currentStep.getKeyword().includes('open')){
-        step = "Given";
-    }else step = "And";
+    if(step.getKeyword().includes('assert') || step.getKeyword().includes('verify')){
+        bdd = "Then";
+    }else if (step.getKeyword().includes('open')){
+        bdd = "Given";
+    }else bdd = "And";
 
-    this.currentStep.output = step + " I " + " " + this.currentStep.getKeyword() + " " + this.currentStep.getText() + " " + this.currentStep.getArguments();
+    step.output = bdd + " I " + this.currentStep.getKeyword() + " " + this.currentStep.getText() + " " + this.currentStep.getArguments();
 }
 
 function captureScreenshot(step){
-    browser.runtime.sendMessage({capture: true}).then(function (result){
-        step.setScreenshot(result.url);
+    browser.windows.getAll().then(function(windows) {
+        browser.tabs.captureVisibleTab(windows[0].id).then(function (url) {
+            step.setScreenshot(url);
+        }).catch(function(reason) {
+            console.log(reason);
+        });
     });
 }

@@ -167,14 +167,3 @@ browser.runtime.onInstalled.addListener(function(details) {
         //browser.tabs.create({url: "http://sideex.org"});
     }
 })
-
-browser.runtime.onMessage.addListener(function (request,sender,sendResponse) {
-    if (request.capture) {
-        browser.windows.getAll().then(function(windows) {
-            browser.tabs.captureVisibleTab(windows[0].id).then(function (url) {
-                sendResponse({url:url});
-            });
-        })
-        return true;
-    }
-})

@@ -119,6 +119,17 @@ LocatorBuilders.prototype.buildAll = function(el) {
             //this.log.debug("locator exception: " + e);
         }
     }
+
+    if(el.placeholder){
+        locators.splice(0,0,[el.placeholder,"target-name"]);
+    }else if(el.name){
+        locators.splice(0,0,[el.name,"target-name"]);
+    }else if(el.innerText){
+        locators.splice(0,0,[el.innerText,"target-name"]);
+    }else if(el.value){
+        locators.splice(0,0,[el.value,"target-name"]);
+    }
+
     return locators;
 };
 
